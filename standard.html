@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>PMTiles naming LAB</title>
+<style>body{margin:0;font:16px sans-serif}h1{font-size:18px;margin:8px}#map{position:absolute;top:44px;bottom:0;width:100%}.maplibregl-canvas{position:absolute;left:0;top:0}</style>
+<h1>Disposable LAB — esfire30.pmtiles</h1><div id="map"></div>
+<script src="maplibre-gl-5.16.0.js"></script><script type="module">
+import {PMTiles,Protocol} from './pmtiles-4.3.0.mjs';
+window.lab={asset:'esfire30.pmtiles',errors:[],header:null,metadata:null};
+const url=new URL('esfire30.pmtiles',location.href).href;
+const archive=new PMTiles(url),protocol=new Protocol();protocol.add(archive);
+maplibregl.addProtocol('pmtiles',protocol.tile);
+archive.getHeader().then(h=>lab.header=h).catch(e=>lab.errors.push(String(e)));
+archive.getMetadata().then(m=>lab.metadata=m).catch(e=>lab.errors.push(String(e)));
+const map=window.map=new maplibregl.Map({container:'map',attributionControl:false,center:[-3.7,40.3],zoom:4,
+style:{version:8,sources:{esfire30:{type:'vector',url:'pmtiles://'+url}},layers:[
+{id:'background',type:'background',paint:{'background-color':'#fafafa'}},
+{id:'fires',type:'fill',source:'esfire30','source-layer':'esfire30',paint:{'fill-color':'#b34020','fill-opacity':0.6}},
+{id:'outlines',type:'line',source:'esfire30','source-layer':'esfire30',paint:{'line-color':'#813018','line-width':1}}]}});
+map.on('error',e=>lab.errors.push(String(e.error)));
+</script>
